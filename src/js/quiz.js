@@ -30,18 +30,21 @@ var MulipleAnswer = React.createClass({
         addNew = this.state.addNew;
 
     if(numberOfAnswers > 0 ) {
-        addremovebuttons = ( <div><button onClick={this.addAnswer}>Add Answer</button>
-                          <button onClick={this.removeAnswer}>Remove Answer</button></div>);
+        addremovebuttons = ( <div><button onClick={this.addAnswer} className="btn btn-primary">Add Answer</button>
+                          <button onClick={this.removeAnswer} className="btn btn-warning">Remove Answer</button></div>);
     }else {
-      addremovebuttons = (<div>"No Answers added"<button onClick={this.addAnswer}>Add Answer</button></div>);
+      addremovebuttons = (<div>No Answers added<br /> <button onClick={this.addAnswer} className="btn btn-primary">Add Answer</button></div>);
     }
     
           
     if(addNew) {
-       answers.push(<label> 
+       answers.push(
+                <div className="checkbox">
+                <label> 
                     <input type="checkbox" name="multipleanswers_check" value="0"/>
                     <input type="text" size="50" />
-                </label>);
+                </label>
+                </div>);
      }else {
        answers.pop();
      }
@@ -85,11 +88,11 @@ var FillTheGap = React.createClass({
     var text = [], i;
 
     for(i = 0; i<value_array.length; i++) {
-      text.push(<button onClick={this.swapValue.bind(this,i)}>{value_array[i]}</button>);
+      text.push(<button onClick={this.swapValue.bind(this,i)} className="btn btn-default btn-sm">{value_array[i]}</button>);
     }
 
     answers.pop()
-    answers.push(<li>{text}</li>);
+    answers.push(<li className="answer_item">{text}</li>);
     
     this.setState({
         answers: answers,
@@ -108,11 +111,16 @@ var FillTheGap = React.createClass({
         value_array[index] = "....";
 
          for(i = 0; i<value_array.length; i++) {
-           text.push(<button onClick={this.swapValue.bind(this,i)}>{value_array[i]}</button>);
+           if (i == index) {
+             text.push(<button className="btn btn-success btn-sm">{value_array[i]}</button>);
+           }else {
+             text.push(<button className="btn btn-default btn-sm">{value_array[i]}</button>);
+           }
+          
         }
 
         answers.pop()
-        answers.push(<li>{text}</li>);
+        answers.push(<li className="answer_item">{text}</li>);
     
         this.setState({
           answers: answers,
@@ -134,16 +142,16 @@ var FillTheGap = React.createClass({
         addNew = this.state.addNew;
 
     if(numberOfAnswers > 0 ) {
-        addremovebuttons = ( <div><button onClick={this.addAnswer}>Add Answer</button>
-                          <button onClick={this.removeAnswer}>Remove Answer</button></div>);
+        addremovebuttons = ( <div><button onClick={this.addAnswer} className="btn btn-primary btn-sm">Add Answer</button>
+                          <button onClick={this.removeAnswer} className="btn btn-warning btn-sm">Remove Answer</button></div>);
     }else {
-      addremovebuttons = (<div>"No Answers added"<button onClick={this.addAnswer}>Add Answer</button></div>);
+      addremovebuttons = (<div>No Answers added<button onClick={this.addAnswer} className="btn btn-primary btn-sm">Add Answer</button></div>);
     }
     
     if(noAddOrRemove == false) {
           if(addNew) {
-       answers.push(<li> 
-                    <input size="50" id="answer{this.state.numberOfAnswers}" onChange={this.handleChange} /><button onClick={this.splitText}>Complete</button>
+       answers.push(<li className="answer_item"> 
+                    <input size="50" id="answer{this.state.numberOfAnswers}" onChange={this.handleChange} /><button onClick={this.splitText} className="btn btn-info btn-xs">Complete</button>
                 </li>);
      }else {
        answers.pop();
@@ -152,7 +160,8 @@ var FillTheGap = React.createClass({
 
     return (<div>
             <ul>{answers}</ul>
-            {addremovebuttons}</div>)
+            {addremovebuttons}
+            </div>)
   }
 });
 
@@ -171,14 +180,21 @@ var Question_Type = React.createClass({
 
     switch(answerslist) {
       case 'yesno':
-        answerstype = (<div><label>
-                    <input type="radio" name="yesno_radio" value="Yes"/>
-                    <span>Yes</span>
-                </label>
-                <label>
-                    <input type="radio" name="yesno_radio" value="No"/>
-                    <span>No</span>
-                </label></div>); 
+        answerstype = (
+                    <div>
+                      <div className="radio">
+                      <label>
+                          <input type="radio" name="yesno_radio" value="Yes"/>
+                          Yes
+                      </label>
+                      </div>
+                      <div className="radio">
+                      <label>
+                          <input type="radio" name="yesno_radio" value="No"/>
+                          No
+                      </label>
+                      </div>
+                    </div>); 
         break;
       case 'multipleanswer':
         answerstype = (<MulipleAnswer />);
@@ -192,13 +208,13 @@ var Question_Type = React.createClass({
 
     return (
       <div>
-      <select value={this.state.selectValue} onChange={this.handleChange} >
+      <select value={this.state.selectValue} onChange={this.handleChange} className="form-control">
         <option value="">Select an answer type</option>
         <option value="yesno">Yes/No</option>
         <option value="multipleanswer">Multiple Answer</option>
         <option value="fillthegap">Fill the gap</option>
       </select>
-      <div>{answerstype}</div>
+      <div className="answerList">{answerstype}</div>
       </div>        
     );
   }
@@ -207,10 +223,15 @@ var Question_Type = React.createClass({
 var Question = React.createClass({
    render: function() {
        return (
-           <div>
+       <div>
+            <div>
            <h3>Question {this.props.numberOfQuestion}:</h3>
-           <input type="text" name="question{this.props.numberOfQuestion}" />
+           <input type="text" size="50" />
+           </div>
+           <br />
+           <div>
             <Question_Type />
+           </div>
        </div>
        );
    }
@@ -254,14 +275,15 @@ var Quiz = React.createClass({
         var gotoq = this.state.gotoQuestion;
         var addremovebuttons;
 
-          addremovebuttons = ( <div><button onClick={this.addQuestion}>Add Question</button>
-                                <button onClick={this.removeQuestion}>Remove Question</button></div>);
+          addremovebuttons = ( <div className="text-right"><button onClick={this.addQuestion} className="btn btn-primary">Add Question</button>
+                                <button onClick={this.removeQuestion} className="btn btn-warning">Remove Question</button></div>);
           
 
         if(addNew) {
-           rows.push(<Question numberOfQuestion={noq} 
+           rows.push(<div className="question"><Question numberOfQuestion={noq} 
                             addQuestion={this.addQuestion}
-                            removeQuestion={this.removeQuestion} />);  
+                            removeQuestion={this.removeQuestion} />
+                      </div>);  
          }else {
           if(noq >= 1 && gotoq > 0) {
             rows.pop();  
