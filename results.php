@@ -15,6 +15,12 @@
     if (!empty($_GET['page'])) {
         $page = $_GET['page'];
     }
+    if (!empty($_POST['student_name'])) {
+        $user['name'] = $_POST['student_name'];
+    }
+    if (!empty($_POST['email_address'])) {
+        $user['username'] = $_POST['email_address'];
+    }
     $dbo = new DBO ($servername, $username, $password, $dbname);
 
     $sql = "SELECT * FROM questions";
@@ -36,6 +42,7 @@
 //        }
 
         $myTC = new MyTinCanAPI();
+        $myTC->createActor($student, $email_address);
         $myTC->createObject($question->getBefore());
         $myTC->createActivityType($question);
         $myTC->createVerb($passed);
@@ -86,6 +93,22 @@
     <div class="row">
         <div class="col-md-12">
             <form name="tincan_test" action="results.php?page=<?php echo $page; ?>" method="post">
+               <?php
+                if(!$user['name'] && !$user['username']) {
+                ?>
+                    <div class="well">
+                        <label for="student_name">Student Name</label>
+                        <input type="text" name="student_name" value="" placeholder="Insert your name" /> 
+                        <label for="email_address">Email Address</label>
+                        <input type="text" name="email_address" value="" placeholder="Insert your email address" size="60" /> 
+                    </div>
+                <?php 
+                }  
+                else { ?>
+                    <input type="hidden" name="student_name" value="<?php echo $user['name']; ?>" />
+                    <input type="hidden" name="email_address" value="<?php echo $user['username']; ?>" />
+                <?php }
+                ?>
                 <div class="well">
 <?php               if ($page == $num_questions) {
                         echo '<h3>Test finished</h3>';

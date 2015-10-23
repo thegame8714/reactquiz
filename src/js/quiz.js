@@ -392,10 +392,15 @@ var Quiz = React.createClass({
         
        
         return (
+          <div>
+            <div>
+              {renderQuizesName}
+            </div>
             <div className="well">
-            {rows}
-            {addremovebuttons}
-            {addsubmitbutton}
+              {rows}
+              {addremovebuttons}
+              {addsubmitbutton}
+            </div>
         </div>
         );
     }

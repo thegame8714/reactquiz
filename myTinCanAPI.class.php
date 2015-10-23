@@ -141,7 +141,6 @@ class myTinCanAPI {
         );
         $response = $this->lrs->saveStatement($statement);
         if ($response->success) {
-            print "Statement sent successfully!\n";
         } else {
             print "Error statement not sent: " . $response->content.'\n';
         }

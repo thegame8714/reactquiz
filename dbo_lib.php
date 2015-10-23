@@ -1,7 +1,7 @@
 <?php
 
 // DB Config
-$servername = "localhost";
+$servername = "169.254.225.244";
 $username = "root";
 $password = "root";
 $dbname = "quizez";
@@ -33,12 +33,12 @@ class DBO
 			}
 			else
 			{
-				echo "Ez da $database datubasea aurkitu.";
+				echo "There's no database $database.";
 				return false;
 			}
 		else
 		{
-			echo "Ezin izan da datubase zerbitzariarekin konektatu.";
+			echo "We can't connect to the database because we are lazy!!!";
 			return false;
 		}
 	}
