@@ -4,26 +4,30 @@
 'use strict';
 
 var MulipleAnswer = React.createClass({
-  getInitialState: function () {
+    getInitialState: function () {
     return {
-      numberOfAnswers: 1,
-      answers: [],
-      addNew: true
+        numberOfAnswers: 1,
+        answers: [],
+        addNew: true
     }
-  },
-  addAnswer: function () {
-       this.setState({
+},
+addAnswer: function () {
+    this.setState({
         numberOfAnswers: this.state.numberOfAnswers + 1,
         addNew:true
-      });
-  },
-  removeAnswer: function() {
-      this.setState({
+    });
+    return false;
+},
+removeAnswer: function() {
+    this.setState({
         numberOfAnswers: this.state.numberOfAnswers - 1,
         addNew:false
-      });
-  },
-  render: function() {
+    });
+    return false;
+},
+render: function() {
+    var qtype_name = 'qtype_' +  + this.props.numberOfQuestion;
+
     var answers = this.state.answers,
         addremovebuttons,
         numberOfAnswers = this.state.numberOfAnswers,
@@ -31,28 +35,92 @@ var MulipleAnswer = React.createClass({
 
     if(numberOfAnswers > 0 ) {
         addremovebuttons = ( <div><button onClick={this.addAnswer} className="btn btn-primary">Add Answer</button>
-                          <button onClick={this.removeAnswer} className="btn btn-warning">Remove Answer</button></div>);
-    }else {
-      addremovebuttons = (<div>No Answers added<br /> <button onClick={this.addAnswer} className="btn btn-primary">Add Answer</button></div>);
-    }
-    
-          
-    if(addNew) {
-       answers.push(
-                <div className="checkbox">
-                <label> 
-                    <input type="checkbox" name="multipleanswers_check" value="0"/>
-                    <input type="text" size="50" />
-                </label>
-                </div>);
-     }else {
-       answers.pop();
-     }
-   
+    <button onClick={this.removeAnswer} className="btn btn-warning">Remove Answer</button></div>);
+}else {
+    addremovebuttons = (<div>No Answers added<br /> <button onClick={this.addAnswer} className="btn btn-primary">Add Answer</button></div>);
+}
 
-    return (<div>{answers}
-            {addremovebuttons}</div>)
-  }
+
+if(addNew) {
+    var answer_name = "q_" + this.props.numberOfQuestion + 'a_' + this.state.numberOfAnswers;
+    var check_name = "q_" + this.props.numberOfQuestion + 'ck_' + this.state.numberOfAnswers;
+
+    answers.push(
+    <div className="checkbox">
+        <label>
+        <input type="checkbox" name="multipleanswers_check" name={check_name} value={this.state.numberOfAnswers} />
+<input type="text" size="50" name={answer_name} />
+    </label>
+    </div>);
+}else {
+    answers.pop();
+}
+
+
+return (<div>
+    <input type="hidden" name={qtype_name} value="cloze"/>
+    {answers}
+{addremovebuttons}</div>)
+}
+});
+
+var ShortAnswer = React.createClass({
+    getInitialState: function () {
+    return {
+        numberOfAnswers: 1,
+        answers: [],
+        addNew: true
+    }
+},
+addAnswer: function () {
+    this.setState({
+        numberOfAnswers: this.state.numberOfAnswers + 1,
+        addNew:true
+    });
+    return false;
+},
+removeAnswer: function() {
+    this.setState({
+        numberOfAnswers: this.state.numberOfAnswers - 1,
+        addNew:false
+    });
+    return false;
+},
+render: function() {
+    var qtype_name = 'qtype_' +  + this.props.numberOfQuestion;
+
+    var answers = this.state.answers,
+        addremovebuttons,
+        numberOfAnswers = this.state.numberOfAnswers,
+        addNew = this.state.addNew;
+
+    if(numberOfAnswers > 0 ) {
+        addremovebuttons = ( <div><button onClick={this.addAnswer} className="btn btn-primary">Add Answer</button>
+    <button onClick={this.removeAnswer} className="btn btn-warning">Remove Answer</button></div>);
+}else {
+    addremovebuttons = (<div>No Answers added<br /> <button onClick={this.addAnswer} className="btn btn-primary">Add Answer</button></div>);
+}
+
+
+if(addNew) {
+    var answer_name = "q_" + this.props.numberOfQuestion + 'a_' + this.state.numberOfAnswers;
+
+    answers.push(
+    <div className="checkbox">
+        <label>
+<input type="text" size="50" name={answer_name} />
+    </label>
+    </div>);
+}else {
+    answers.pop();
+}
+
+
+return (<div>
+    <input type="hidden" name={qtype_name} value="short"/>
+    {answers}
+{addremovebuttons}</div>)
+}
 });
 
 var FillTheGap = React.createClass({
@@ -61,7 +129,7 @@ var FillTheGap = React.createClass({
       numberOfAnswers: 1,
       answers: [],
       addNew: true,
-      value: "Insert the anser",
+      value: "Insert the answer",
       value_array: [],
       noAddOrRemove: false
     }
@@ -72,6 +140,7 @@ var FillTheGap = React.createClass({
         addNew:true,
         noAddOrRemove: false
       });
+      return false;
   },
   removeAnswer: function() {
       this.setState({
@@ -79,6 +148,7 @@ var FillTheGap = React.createClass({
         addNew:false,
         noAddOrRemove: false
       });
+      return false;
   },
   splitText: function() {
     var value = this.state.value;
@@ -88,7 +158,8 @@ var FillTheGap = React.createClass({
     var text = [], i;
 
     for(i = 0; i<value_array.length; i++) {
-      text.push(<button onClick={this.swapValue.bind(this,i)} className="btn btn-default btn-sm">{value_array[i]}</button>);
+      var answer_name = "q_" + this.props.numberOfQuestion + "w_" + i;
+      text.push(<input type="text" readonly onClick={this.swapValue.bind(this,i)} className="btn btn-default btn-sm" id={answer_name} name={answer_name} value={value_array[i]} />);
     }
 
     answers.pop()
@@ -106,15 +177,17 @@ var FillTheGap = React.createClass({
         answers = this.state.answers,
         text = [], i;
 
-        console.log(value_array[index]);
+//        console.log(value_array[index]);
 
-        value_array[index] = "....";
+//        value_array[index] = "....";
 
          for(i = 0; i<value_array.length; i++) {
            if (i == index) {
-             text.push(<button className="btn btn-success btn-sm">{value_array[i]}</button>);
+               var answer_name = "q_" + this.props.numberOfQuestion + "g_" + i;
+               text.push(<input type="text" readonly onClick={this.swapValue.bind(this,i)} className="btn btn-success btn-sm" id={answer_name} name={answer_name} value={value_array[i]} />);
            }else {
-             text.push(<button className="btn btn-default btn-sm">{value_array[i]}</button>);
+             var answer_name = "q_" + this.props.numberOfQuestion + "w_" + i;
+             text.push(<input type="text" readonly onClick={this.swapValue.bind(this,i)} className="btn btn-default btn-sm" id={answer_name} name={answer_name} value={value_array[i]} />);
            }
           
         }
@@ -126,6 +199,7 @@ var FillTheGap = React.createClass({
           answers: answers,
           value_array: value_array
         })
+        return false;
 
   },
   handleChange: function(evt) {
@@ -134,7 +208,10 @@ var FillTheGap = React.createClass({
       noAddOrRemove: true
     });
   },
-  render: function() { 
+  render: function() {
+      var qtype_name = 'qtype_' +  + this.props.numberOfQuestion;
+      var answer_name = 'q_' +  + this.props.numberOfQuestion + 'a_' + this.state.numberOfAnswers;
+
     var answers = this.state.answers,
         addremovebuttons,
         numberOfAnswers = this.state.numberOfAnswers,
@@ -142,8 +219,7 @@ var FillTheGap = React.createClass({
         addNew = this.state.addNew;
 
     if(numberOfAnswers > 0 ) {
-        addremovebuttons = ( <div><button onClick={this.addAnswer} className="btn btn-primary btn-sm">Add Answer</button>
-                          <button onClick={this.removeAnswer} className="btn btn-warning btn-sm">Remove Answer</button></div>);
+        addremovebuttons = ( <div><button onClick={this.removeAnswer} className="btn btn-warning btn-sm">Remove Answer</button></div>);
     }else {
       addremovebuttons = (<div>No Answers added<button onClick={this.addAnswer} className="btn btn-primary btn-sm">Add Answer</button></div>);
     }
@@ -159,6 +235,7 @@ var FillTheGap = React.createClass({
     }
 
     return (<div>
+            <input type="hidden" name={qtype_name} value="fillthegap"/>
             <ul>{answers}</ul>
             {addremovebuttons}
             </div>)
@@ -180,27 +257,33 @@ var Question_Type = React.createClass({
 
     switch(answerslist) {
       case 'yesno':
+        var radio_name = 'q_' + this.props.numberOfQuestion + 'a_';
+        var qtype_name = 'qtype_' +  + this.props.numberOfQuestion;
         answerstype = (
                     <div>
+                      <input type="hidden" name={qtype_name} value="yesno"/>
                       <div className="radio">
                       <label>
-                          <input type="radio" name="yesno_radio" value="Yes"/>
+                          <input type="radio" name={radio_name} value="Yes"/>
                           Yes
                       </label>
                       </div>
                       <div className="radio">
                       <label>
-                          <input type="radio" name="yesno_radio" value="No"/>
+                          <input type="radio" name={radio_name} value="No"/>
                           No
                       </label>
                       </div>
                     </div>); 
         break;
       case 'multipleanswer':
-        answerstype = (<MulipleAnswer />);
+        answerstype = (<MulipleAnswer numberOfQuestion={this.props.numberOfQuestion} />);
+        break;
+      case 'short':
+        answerstype = (<ShortAnswer numberOfQuestion={this.props.numberOfQuestion} />);
         break;
       case "fillthegap":
-        answerstype = (<FillTheGap />);
+        answerstype = (<FillTheGap numberOfQuestion={this.props.numberOfQuestion} />);
         break;
       default:
         answerstype = (<label>No type selected yet</label>);
@@ -212,6 +295,7 @@ var Question_Type = React.createClass({
         <option value="">Select an answer type</option>
         <option value="yesno">Yes/No</option>
         <option value="multipleanswer">Multiple Answer</option>
+        <option value="short">Short Answer</option>
         <option value="fillthegap">Fill the gap</option>
       </select>
       <div className="answerList">{answerstype}</div>
@@ -222,15 +306,16 @@ var Question_Type = React.createClass({
 
 var Question = React.createClass({
    render: function() {
+       var id = "q_" + this.props.numberOfQuestion;
        return (
-       <div>
+           <div>
             <div>
            <h3>Question {this.props.numberOfQuestion}:</h3>
-           <input type="text" size="50" />
+           <input type="text" size="50" name={id} id={id} />
            </div>
            <br />
            <div>
-            <Question_Type />
+            <Question_Type numberOfQuestion={this.props.numberOfQuestion} />
            </div>
        </div>
        );
@@ -252,6 +337,7 @@ var Quiz = React.createClass({
         gotoQuestion: this.state.numberOfQuestion + 1,
         addNew: true
       });
+      return false;
     },
     removeQuestion: function () {
       if(this.state.numberOfQuestion > 1) {
@@ -267,6 +353,11 @@ var Quiz = React.createClass({
         addNew: false
       });
       }
+      return false;
+    },
+    submit: function () {
+        // Do everything you need before submit
+        $('#content').submit();
     },
     render: function() {
         var rows = this.state.rows;
@@ -277,7 +368,10 @@ var Quiz = React.createClass({
 
           addremovebuttons = ( <div className="text-right"><button onClick={this.addQuestion} className="btn btn-primary">Add Question</button>
                                 <button onClick={this.removeQuestion} className="btn btn-warning">Remove Question</button></div>);
-          
+
+        var addsubmitbutton;
+        addsubmitbutton = ( <div className="submit text-right"><button onClick={this.submit} className="btn btn-primary">Submit</button> </div>);
+
 
         if(addNew) {
            rows.push(<div className="question"><Question numberOfQuestion={noq} 
@@ -301,6 +395,7 @@ var Quiz = React.createClass({
             <div className="well">
             {rows}
             {addremovebuttons}
+            {addsubmitbutton}
         </div>
         );
     }
